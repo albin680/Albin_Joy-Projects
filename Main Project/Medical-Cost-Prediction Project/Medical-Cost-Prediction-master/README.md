@@ -2,8 +2,7 @@
 
 <div align= "center">
   <h4>Medical Insurance Cost Prediction using Random Forest Regressor.</h4><br>
-  <img src="https://github.com/SahilChachra/Medical-Cost-Prediction/blob/master/sampleImages/doc.gif">
-</div>
+  
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
