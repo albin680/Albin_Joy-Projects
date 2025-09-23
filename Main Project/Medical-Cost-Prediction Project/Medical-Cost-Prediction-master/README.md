@@ -11,13 +11,6 @@
 
 To predict things have been never so easy. I used to wonder how Insurance amount is charged normally. So, in the mean time I came across this dataset and thought of working on it! Using this I wanted to know how few features determine our insurance amount! 
  
-## :hourglass: Some Screenshots
-
-![](https://github.com/SahilChachra/Medical-Cost-Prediction/blob/master/sampleImages/Cor.png)
-
-![](https://github.com/SahilChachra/Medical-Cost-Prediction/blob/master/sampleImages/AgevsCharges.png)
-
-![](https://github.com/SahilChachra/Medical-Cost-Prediction/blob/master/sampleImages/deployments.png)
 
 ## :star: Features
 <ol>
@@ -46,7 +39,7 @@ To predict things have been never so easy. I used to wonder how Insurance amount
 The dataset used can be downloaded here (Kaggle) - [Click to Download](https://www.kaggle.com/mirichoi0218/insurance)
 
 ## :heart: Owner
-Made with :heart:&nbsp;  by [Sahil Chachra](https://github.com/SahilChachra)
+Made with :heart:&nbsp;  by [Albin Joy].
 
 ## :eyes: License
-MIT © [Sahil Chachra](https://github.com/SahilChachra/Medical-Cost-Prediction/blob/master/LICENSE)
+MIT © [Albin Joy]
