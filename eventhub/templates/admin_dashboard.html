@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | EventHub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body class="bg-gray-100 p-8">
+
+    <div class="max-w-7xl mx-auto">
+        <div class="flex justify-between items-center mb-8">
+            <h1 class="text-3xl font-bold text-gray-800">Admin Command Center</h1>
+            <div class="flex gap-4">
+                <a href="{% url 'approved_vendors' %}" class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg shadow transition">
+                    View Approved Vendors
+                </a>
+                <a href="{% url 'export_bookings_csv' %}" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg shadow transition">
+                    Export CSV Report
+                </a>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
+            <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-blue-500">
+                <p class="text-sm text-gray-500 uppercase font-bold text-xs">Total In Escrow</p>
+                <h2 class="text-2xl font-bold text-gray-800">₹{{ total_escrow_balance|floatformat:2 }}</h2>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-indigo-500">
+                <p class="text-sm text-gray-500 uppercase font-bold text-xs">Pending Vendors</p>
+                <h2 class="text-2xl font-bold text-indigo-600">{{ pending_vendors.count }}</h2>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-red-500">
+                <p class="text-sm text-gray-500 uppercase font-bold text-xs">Open Disputes</p>
+                <h2 class="text-2xl font-bold text-red-500">{{ active_disputes_count }}</h2>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-green-500">
+                <p class="text-sm text-gray-500 uppercase font-bold text-xs">Platform Revenue</p>
+                <h2 class="text-2xl font-bold text-green-600">₹{{ platform_fees|floatformat:2 }}</h2>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-sm mb-10 p-6">
+            <h2 class="text-xl font-bold mb-4 text-gray-800">All Bookings</h2>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead class="bg-gray-50 text-gray-600 uppercase text-xs">
+                        <tr>
+                            <th class="p-4 border-b">ID</th>
+                            <th class="p-4 border-b">Customer/Vendor</th>
+                            <th class="p-4 border-b">Event Date</th>
+                            <th class="p-4 border-b text-red-500">Fee (10%)</th>
+                            <th class="p-4 border-b text-green-600">Payout (90%)</th>
+                            <th class="p-4 border-b">Advance</th>
+                            <th class="p-4 border-b">Balance</th>
+                            <th class="p-4 border-b text-center">Status</th>
+                            <th class="p-4 border-b">Payout Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-sm">
+                        {% for booking in bookings %}
+                        <tr class="border-t hover:bg-gray-50 transition">
+                            <td class="p-4 font-bold">#{{ booking.id }}</td>
+                            <td class="p-4">
+                                <div class="font-semibold text-gray-800">{{ booking.customer.username }}</div>
+                                <div class="text-xs text-gray-500">To: {{ booking.vendor.business_name }}</div>
+                            </td>
+                            <td class="p-4 text-xs">{{ booking.event_datetime|date:"d M Y, H:i" }}</td>
+                            <td class="p-4 text-red-500 font-bold">₹{{ booking.commission }}</td>
+                            <td class="p-4 text-green-600 font-bold">₹{{ booking.vendor_payout }}</td>
+                            
+                            <td class="p-4">
+                                <div class="flex flex-col">
+                                    <span class="{% if booking.advance_paid %}text-green-600{% else %}text-gray-400{% endif %} font-semibold">
+                                        ₹{{ booking.advance_amount }}
+                                        {% if booking.advance_paid %}<i class="fas fa-check-circle ml-1"></i>{% endif %}
+                                    </span>
+                                    {% if booking.advance_released %}
+                                        <span class="text-[10px] text-blue-500 font-bold uppercase">Released</span>
+                                    {% endif %}
+                                </div>
+                            </td>
+
+                            <td class="p-4">
+                                <div class="flex flex-col">
+                                    <span class="{% if booking.balance_paid %}text-green-600{% else %}text-gray-400{% endif %} font-semibold">
+                                        ₹{{ booking.balance_amount }}
+                                        {% if booking.balance_paid %}<i class="fas fa-check-circle ml-1"></i>{% endif %}
+                                    </span>
+                                    {% if booking.balance_released %}
+                                        <span class="text-[10px] text-blue-500 font-bold uppercase">Released</span>
+                                    {% endif %}
+                                </div>
+                            </td>
+
+                            <td class="p-4 text-center">
+                                <span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider
+                                {% if booking.status == 'pending' %} bg-gray-100 text-gray-600
+                                {% elif booking.status == 'confirmed' %} bg-yellow-100 text-yellow-700
+                                {% elif booking.status == 'completed' %} bg-blue-100 text-blue-700
+                                {% elif booking.status == 'released' %} bg-green-100 text-green-700
+                                {% elif booking.status == 'disputed' %} bg-red-100 text-red-700
+                                {% elif booking.status == 'cancelled' %} bg-black text-white
+                                {% endif %}">
+                                    {{ booking.get_status_display }}
+                                </span>
+                            </td>
+
+                            <td class="p-4">
+                                {% if booking.status == 'completed' and not booking.payout_released %}
+                                    <form method="POST" action="{% url 'release_payment' booking.id %}" onsubmit="return confirm('Release funds to vendor?')">
+                                        {% csrf_token %}
+                                        <button class="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1 rounded shadow-sm text-xs font-bold transition">
+                                            Release All
+                                        </button>
+                                    </form>
+                                {% elif booking.payout_released %}
+                                    <span class="text-green-600 font-bold text-xs uppercase italic flex items-center">
+                                        <i class="fas fa-hand-holding-usd mr-1"></i> Paid
+                                    </span>
+                                {% else %}
+                                    <span class="text-gray-400 text-xs italic flex items-center">
+                                        <i class="fas fa-lock mr-1 text-[10px]"></i> Locked
+                                    </span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="9" class="p-8 text-center text-gray-400 italic">No bookings recorded in the system.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-sm p-6 border border-indigo-100">
+            <h2 class="text-xl font-bold mb-4 text-indigo-800">Pending Vendor Approvals</h2>
+            {% if pending_vendors %}
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {% for vendor in pending_vendors %}
+                    <div class="flex items-center justify-between p-4 border rounded-lg hover:border-indigo-300 transition bg-indigo-50/30">
+                        <div class="flex items-center gap-4">
+                            {% if vendor.profile_pic %}
+                                <img src="{{ vendor.profile_pic.url }}" class="w-12 h-12 rounded-full object-cover border-2 border-white shadow-sm">
+                            {% endif %}
+                            <div>
+                                <h3 class="font-bold text-gray-800">{{ vendor.business_name }}</h3>
+                                <p class="text-xs text-gray-500">{{ vendor.category.name }} | {{ vendor.location }}</p>
+                                <a href="{{ vendor.id_proof.url }}" target="_blank" class="text-indigo-600 text-[10px] font-bold hover:underline uppercase tracking-tighter">Verify Documents →</a>
+                            </div>
+                        </div>
+                        <form action="{% url 'approve_vendor' vendor.id %}" method="POST">
+                            {% csrf_token %}
+                            <button class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-xs font-bold transition shadow-sm">
+                                Approve
+                            </button>
+                        </form>
+                    </div>
+                {% endfor %}
+                </div>
+            {% else %}
+                <div class="flex items-center gap-2 text-gray-400 italic">
+                    <i class="fas fa-check-double text-green-500"></i>
+                    <p>All vendor applications have been processed.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+</body>
+</html>

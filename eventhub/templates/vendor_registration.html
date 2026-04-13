@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vendor Registration | EventHub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-gray-100">
+
+<div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-3xl w-full space-y-8 bg-white p-10 rounded-3xl shadow-2xl border-t-8 border-indigo-600">
+        
+        <div class="text-center">
+            <div class="inline-flex items-center justify-center w-16 h-16 bg-indigo-100 text-indigo-600 rounded-full mb-4">
+                <i class="fas fa-store text-2xl"></i>
+            </div>
+            <h2 class="text-3xl font-black text-gray-900 tracking-tight">Vendor Partnership</h2>
+            <p class="mt-2 text-sm text-gray-500 font-medium">Join our marketplace and grow your business.</p>
+        </div>
+
+        {% if messages %}
+            <div class="space-y-2">
+            {% for message in messages %}
+                <div class="p-4 rounded-xl {% if 'error' in message.tags %}bg-red-100 text-red-700 border border-red-200{% else %}bg-green-100 text-green-700 border border-green-200{% endif %} font-bold text-sm">
+                    <i class="fas {% if 'error' in message.tags %}fa-exclamation-circle{% else %}fa-check-circle{% endif %} mr-2"></i>
+                    {{ message }}
+                </div>
+            {% endfor %}
+            </div>
+        {% endif %}
+
+        <form class="mt-8 space-y-8" action="{% url 'register_vendor' %}" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <div class="bg-indigo-50/50 p-6 rounded-2xl border border-indigo-100">
+                <h3 class="text-sm font-black text-indigo-700 mb-4 uppercase tracking-widest flex items-center">
+                    <span class="w-6 h-6 bg-indigo-600 text-white rounded-full flex items-center justify-center mr-2 text-[10px]">1</span>
+                    Account Information
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div class="md:col-span-2">
+                        <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Email Address</label>
+                        <input name="email" type="email" required class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none shadow-sm" placeholder="business@example.com">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Password</label>
+                        <input name="password" type="password" required class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none shadow-sm" autocomplete="new-password">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Confirm Password</label>
+                        <input name="confirm_password" type="password" required class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none shadow-sm" autocomplete="new-password">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Full Name</label>
+                        <input name="full_name" type="text" required class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none shadow-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Phone Number</label>
+                        <input name="phone" type="tel" required class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none shadow-sm" placeholder="+91...">
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+                <h3 class="text-sm font-black text-gray-700 mb-4 uppercase tracking-widest flex items-center">
+                    <span class="w-6 h-6 bg-gray-800 text-white rounded-full flex items-center justify-center mr-2 text-[10px]">2</span>
+                    Business Profile
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div class="md:col-span-2">
+                        <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Business Name</label>
+                        <input name="business_name" type="text" required class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none shadow-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Service Category</label>
+                        <select id="categorySelect" name="category_id" required class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none shadow-sm bg-gray-50">
+                            <option value="" disabled selected>Select Category</option>
+                            {% for cat in categories %}
+                                <option value="{{ cat.id }}">{{ cat.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div id="basePriceContainer">
+                        <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Starting Price (₹)</label>
+                        <input name="base_price" type="number" min="0" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none shadow-sm" placeholder="General service fee">
+                    </div>
+
+                    <div id="cateringOptions" class="md:col-span-2 hidden bg-indigo-50/30 p-5 rounded-2xl border border-dashed border-indigo-200">
+                        <label class="block text-xs font-bold text-indigo-800 uppercase mb-4 tracking-tighter">Catering Menu & Pricing (Per Plate)</label>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="flex items-center space-x-3 bg-white p-3 rounded-xl border border-gray-100 shadow-sm">
+                                <input type="checkbox" name="food_types" value="veg" class="w-5 h-5 text-indigo-600 rounded">
+                                <div class="flex-1">
+                                    <span class="text-xs font-bold text-gray-600 block">Veg Price</span>
+                                    <input type="number" name="veg_price" placeholder="₹" class="w-full mt-1 text-sm border-none focus:ring-0 p-0 text-indigo-600 font-bold">
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-3 bg-white p-3 rounded-xl border border-gray-100 shadow-sm">
+                                <input type="checkbox" name="food_types" value="non-veg" class="w-5 h-5 text-indigo-600 rounded">
+                                <div class="flex-1">
+                                    <span class="text-xs font-bold text-gray-600 block">Non-Veg Price</span>
+                                    <input type="number" name="nonveg_price" placeholder="₹" class="w-full mt-1 text-sm border-none focus:ring-0 p-0 text-indigo-600 font-bold">
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-3 bg-white p-3 rounded-xl border border-gray-100 shadow-sm">
+                                <input type="checkbox" name="food_types" value="jain" class="w-5 h-5 text-indigo-600 rounded">
+                                <div class="flex-1">
+                                    <span class="text-xs font-bold text-gray-600 block">Jain Price</span>
+                                    <input type="number" name="jain_price" placeholder="₹" class="w-full mt-1 text-sm border-none focus:ring-0 p-0 text-indigo-600 font-bold">
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-3 bg-white p-3 rounded-xl border border-gray-100 shadow-sm">
+                                <input type="checkbox" name="food_types" value="buffet" class="w-5 h-5 text-indigo-600 rounded">
+                                <div class="flex-1">
+                                    <span class="text-xs font-bold text-gray-600 block">Buffet (Bofa)</span>
+                                    <input type="number" name="buffet_price" placeholder="₹" class="w-full mt-1 text-sm border-none focus:ring-0 p-0 text-indigo-600 font-bold">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="transportOptions" class="md:col-span-2 hidden bg-emerald-50/30 p-5 rounded-2xl border border-dashed border-emerald-200">
+                        <div class="flex justify-between items-center mb-4">
+                            <label class="block text-xs font-bold text-emerald-800 uppercase tracking-tighter">Vehicle Fleet & Rates</label>
+                            <button type="button" id="addVehicle" class="text-[10px] bg-emerald-600 text-white px-3 py-1 rounded-full font-bold hover:bg-emerald-700">
+                                <i class="fas fa-plus mr-1"></i> Add Vehicle
+                            </button>
+                        </div>
+                        
+                        <div id="vehicleList" class="space-y-3">
+                            <div class="grid grid-cols-3 gap-3 bg-white p-3 rounded-xl border border-gray-100 shadow-sm">
+                                <input type="text" name="vehicle_names[]" placeholder="Vehicle Name (e.g. Innova)" class="text-xs border-none focus:ring-0 font-bold text-gray-700">
+                                <input type="number" name="vehicle_bases[]" placeholder="Base ₹" class="text-xs border-none focus:ring-0 text-emerald-600 font-bold">
+                                <input type="number" name="vehicle_kms[]" placeholder="₹ / KM" class="text-xs border-none focus:ring-0 text-emerald-600 font-bold">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="md:col-span-2">
+                        <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Operational City</label>
+                        <input name="location" type="text" required class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none shadow-sm" placeholder="e.g. Kochi, Kerala">
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-amber-50/50 p-6 rounded-2xl border border-amber-100">
+                <h3 class="text-sm font-black text-amber-800 mb-4 uppercase tracking-widest flex items-center">
+                    <span class="w-6 h-6 bg-amber-600 text-white rounded-full flex items-center justify-center mr-2 text-[10px]">3</span>
+                    Verification & Documents
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-xs font-bold text-amber-900 uppercase mb-2">Govt ID (PDF/Image)</label>
+                        <input name="id_proof" type="file" accept=".pdf,.jpg,.jpeg,.png" required class="block w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-amber-100 file:text-amber-700 hover:file:bg-amber-200 cursor-pointer">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-amber-900 uppercase mb-2">Logo/Profile Pic</label>
+                        <input name="profile_pic" type="file" accept="image/*" required class="block w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-amber-100 file:text-amber-700 hover:file:bg-amber-200 cursor-pointer">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-xs font-bold text-amber-900 uppercase mb-2">Featured Service Image</label>
+                        <input name="service_image" type="file" accept="image/*" required class="block w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-amber-100 file:text-amber-700 hover:file:bg-amber-200 cursor-pointer">
+                    </div>
+                </div>
+            </div>
+
+            <div class="pt-4">
+                <button type="submit" class="w-full flex justify-center py-4 px-4 border border-transparent rounded-2xl shadow-xl text-lg font-black text-white bg-indigo-600 hover:bg-indigo-700 transition transform hover:-translate-y-1 active:scale-95">
+                    Launch My Business Profile
+                </button>
+                <div class="mt-4 text-center">
+                    <a href="{% url 'login' %}" class="text-sm font-bold text-indigo-600 hover:text-indigo-800 transition">Already have an account? Login here</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    const categorySelect = document.getElementById('categorySelect');
+    const cateringOptions = document.getElementById('cateringOptions');
+    const transportOptions = document.getElementById('transportOptions');
+    const basePriceContainer = document.getElementById('basePriceContainer');
+    const vehicleList = document.getElementById('vehicleList');
+    const addVehicleBtn = document.getElementById('addVehicle');
+
+    categorySelect.addEventListener('change', function() {
+        const selectedText = this.options[this.selectedIndex].text.toLowerCase();
+        
+        // Reset visibility
+        cateringOptions.classList.add('hidden');
+        transportOptions.classList.add('hidden');
+        basePriceContainer.classList.remove('hidden');
+
+        if (selectedText.includes('catering') || selectedText.includes('caterer')) {
+            cateringOptions.classList.remove('hidden');
+            basePriceContainer.classList.add('hidden');
+        } 
+        else if (selectedText.includes('transportation') || selectedText.includes('travel')) {
+            transportOptions.classList.remove('hidden');
+            basePriceContainer.classList.add('hidden');
+        }
+    });
+
+    // Dynamic Vehicle Inputs
+    addVehicleBtn.addEventListener('click', () => {
+        const row = document.createElement('div');
+        row.className = "grid grid-cols-3 gap-3 bg-white p-3 rounded-xl border border-gray-100 shadow-sm relative group";
+        row.innerHTML = `
+            <input type="text" name="vehicle_names[]" required placeholder="Vehicle Name" class="text-xs border-none focus:ring-0 font-bold text-gray-700">
+            <input type="number" name="vehicle_bases[]" required placeholder="Base ₹" class="text-xs border-none focus:ring-0 text-emerald-600 font-bold">
+            <input type="number" name="vehicle_kms[]" required placeholder="₹ / KM" class="text-xs border-none focus:ring-0 text-emerald-600 font-bold">
+            <button type="button" class="absolute -right-2 -top-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity text-[10px]" onclick="this.parentElement.remove()">×</button>
+        `;
+        vehicleList.appendChild(row);
+    });
+
+    // File size check
+    const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+    document.querySelectorAll('input[type="file"]').forEach(input => {
+        input.addEventListener('change', function() {
+            if (this.files[0] && this.files[0].size > MAX_FILE_SIZE) {
+                alert("File is too big! Please select a file smaller than 5MB.");
+                this.value = "";
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

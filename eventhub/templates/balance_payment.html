@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Balance Payment | EventHub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+</head>
+<body class="bg-gray-50 flex items-center justify-center min-h-screen p-4">
+
+    <div class="max-w-md w-full bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100">
+        <div class="bg-indigo-900 p-8 text-white text-center">
+            <div class="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                <svg class="w-6 h-6 text-indigo-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
+                </svg>
+            </div>
+            <h2 class="text-2xl font-bold">Final Payment</h2>
+            <p class="text-indigo-300 text-sm mt-1 uppercase tracking-widest font-semibold">Booking ID: #{{ booking.id }}</p>
+        </div>
+
+        <div class="p-8">
+            <div class="flex justify-between items-center mb-4 border-b pb-4 border-gray-50">
+                <span class="text-gray-400 text-sm font-medium uppercase tracking-wide">Service Provider</span>
+                <span class="text-gray-900 font-bold">{{ booking.vendor.business_name }}</span>
+            </div>
+
+            <div class="flex justify-between items-center mb-6">
+                <span class="text-gray-400 text-sm font-medium uppercase tracking-wide">Balance Due (40%)</span>
+                <span class="text-3xl font-black text-indigo-600">₹{{ display_amount|floatformat:2 }}</span>
+            </div>
+
+            <div class="bg-indigo-50 p-4 rounded-2xl mb-8 border border-indigo-100 flex items-start">
+                <svg class="w-5 h-5 text-indigo-500 mt-0.5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <p class="text-sm text-indigo-700 leading-relaxed">
+                    This completes your booking for the event on <strong>{{ booking.event_datetime|date:"M d, Y" }}</strong>.
+                </p>
+            </div>
+
+            <button id="rzp-button1" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 rounded-2xl shadow-lg shadow-indigo-100 transition-all duration-300 flex items-center justify-center transform hover:-translate-y-1">
+                Pay Securely with Razorpay
+            </button>
+
+            <a href="{% url 'customer_dashboard' %}" class="block text-center mt-6 text-sm text-gray-400 hover:text-indigo-600 transition-colors font-medium">
+                Return to Dashboard
+            </a>
+        </div>
+
+        <div class="bg-gray-50 p-4 text-center border-t border-gray-100">
+            <p class="text-[10px] text-gray-400 uppercase tracking-[0.2em] font-bold">Encrypted Escrow Transaction</p>
+        </div>
+    </div>
+
+    <form id="payment-form" action="{% url 'payment_verify' %}" method="POST" style="display: none;">
+        {% csrf_token %}
+        <input type="hidden" name="razorpay_payment_id" id="razorpay_payment_id">
+        <input type="hidden" name="razorpay_order_id" id="razorpay_order_id">
+        <input type="hidden" name="razorpay_signature" id="razorpay_signature">
+    </form>
+
+    <script>
+        var options = {
+            "key": "{{ razorpay_merchant_key }}", 
+            "amount": {{ amount }}, // Passed as raw integer
+            "currency": "{{ currency }}",
+            "name": "EventHub",
+            "description": "Final Balance for {{ booking.vendor.business_name }}",
+            "order_id": "{{ razorpay_order_id }}",
+            
+            "handler": function (response){
+                // Securely populate the hidden form and submit via POST
+                document.getElementById('razorpay_payment_id').value = response.razorpay_payment_id;
+                document.getElementById('razorpay_order_id').value = response.razorpay_order_id;
+                document.getElementById('razorpay_signature').value = response.razorpay_signature;
+                document.getElementById('payment-form').submit();
+            },
+            
+            "prefill": {
+                "name": "{{ request.user.username }}",
+                "email": "{{ request.user.email }}",
+                "contact": "{{ booking.customer_phone|default:request.user.phone }}"
+            },
+            
+            "theme": {
+                "color": "#312E81"
+            }
+        };
+
+        var rzp1 = new Razorpay(options);
+        
+        document.getElementById('rzp-button1').onclick = function(e){
+            rzp1.open();
+            e.preventDefault();
+        }
+    </script>
+</body>
+</html>

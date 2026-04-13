@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Approved Vendors</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 p-8">
+
+<h1 class="text-3xl font-bold mb-8 text-green-700">Approved Vendors</h1>
+
+<a href="{% url 'admin_dashboard' %}" class="mb-6 inline-block bg-gray-700 text-white px-4 py-2 rounded">
+    ← Back to Dashboard
+</a>
+
+<div class="bg-white rounded shadow p-6">
+
+{% if vendors %}
+{% for vendor in vendors %} <div class="flex items-center gap-6 border-b py-5">
+
+```
+    {% if vendor.profile_pic %}
+        <img src="{{ vendor.profile_pic.url }}" class="w-20 h-20 rounded object-cover">
+    {% else %}
+        <div class="w-20 h-20 bg-gray-300 rounded"></div>
+    {% endif %}
+
+    <div class="flex-1">
+        <h2 class="text-xl font-bold">{{ vendor.business_name }}</h2>
+        <p class="text-gray-600">Vendor Category{{ vendor.category }}</p>
+        <p class="text-gray-600">Location:{{ vendor.location }}</p>
+        <p class="text-gray-600">Phone: {{ vendor.phone }}</p>
+        <p class="text-gray-600">Base Price:{{ vendor.base_price}}</p>
+
+        <p class="text-green-600 font-semibold mt-1">✔ Verified Vendor</p>
+
+        {% if vendor.id_proof %}
+            <a href="{{ vendor.id_proof.url }}" target="_blank" class="text-blue-600 text-sm">
+                View ID Proof
+            </a>
+        {% endif %}
+    </div>
+
+</div>
+{% endfor %}
+```
+
+{% else %} <p class="text-gray-500 text-lg">No approved vendors yet.</p>
+{% endif %}
+
+</div>
+
+</body>
+</html>

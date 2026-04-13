@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vendor Dashboard | EventHub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body class="bg-gray-50 flex min-h-screen">
+
+<aside class="w-64 bg-slate-900 text-white hidden lg:flex flex-col sticky top-0 h-screen shadow-2xl">
+    <div class="p-8">
+        <h1 class="text-2xl font-black tracking-tighter text-indigo-400 italic">
+            EventHub
+            <span class="text-white text-[10px] block opacity-50 font-bold uppercase tracking-widest mt-1">
+                Vendor Partner
+            </span>
+        </h1>
+    </div>
+
+    <nav class="flex-1 px-4 space-y-1">
+        <a href="{% url 'vendor_dashboard' %}" class="flex items-center py-3 px-4 rounded-xl bg-indigo-600 font-bold transition-all shadow-lg shadow-indigo-900/20">
+            <i class="fas fa-th-large mr-3 opacity-75"></i> Dashboard
+        </a>
+        <a href="{% url 'update_portfolio' %}" class="flex items-center py-3 px-4 rounded-xl text-slate-400 hover:bg-slate-800 hover:text-white transition-all group">
+            <i class="fas fa-user-gear mr-3 opacity-50 group-hover:opacity-100"></i> Edit Profile
+        </a>
+        <a href="#" class="flex items-center py-3 px-4 rounded-xl text-slate-400 hover:bg-slate-800 hover:text-white transition-all group">
+            <i class="fas fa-history mr-3 opacity-50 group-hover:opacity-100"></i> Job History
+        </a>
+    </nav>
+
+    <div class="p-6 border-t border-slate-800">
+        <form action="{% url 'logout' %}" method="POST">
+            {% csrf_token %}
+            <button type="submit" class="w-full flex items-center justify-center py-3 px-4 rounded-xl bg-slate-800 text-red-400 font-bold hover:bg-red-500 hover:text-white transition-all">
+                <i class="fas fa-sign-out-alt mr-2"></i> Logout
+            </button>
+        </form>
+    </div>
+</aside>
+
+<main class="flex-1 overflow-y-auto">
+
+    <header class="bg-white border-b border-gray-100 py-4 px-6 md:px-10 flex justify-between items-center sticky top-0 z-30">
+        <div>
+            <h2 class="text-2xl font-extrabold text-gray-800">Hello, {{ vendor.business_name }}!</h2>
+            <p class="text-sm text-gray-400">Manage your catering bookings and track your split payments.</p>
+        </div>
+
+        <div class="flex items-center space-x-4">
+            <div class="text-right hidden sm:block">
+                <p class="text-sm font-bold text-gray-800">{{ request.user.get_full_name }}</p>
+                <p class="text-xs text-indigo-500 font-medium italic">{{ vendor.category.name }}</p>
+            </div>
+            <div class="relative">
+                {% if vendor.profile_pic %}
+                    <img src="{{ vendor.profile_pic.url }}" class="w-12 h-12 rounded-2xl border-2 border-indigo-50 object-cover shadow-sm">
+                {% else %}
+                    <div class="w-12 h-12 rounded-2xl bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold border-2 border-indigo-50">
+                        {{ vendor.business_name|slice:":1" }}
+                    </div>
+                {% endif %}
+                <span class="absolute -bottom-1 -right-1 w-4 h-4 {% if vendor.is_available %}bg-green-500{% else %}bg-gray-400{% endif %} border-2 border-white rounded-full"></span>
+            </div>
+        </div>
+    </header>
+
+    <div class="p-6 md:p-10 max-w-7xl mx-auto">
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+            <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 relative overflow-hidden group">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="bg-emerald-50 text-emerald-600 p-3 rounded-2xl">
+                        <i class="fas fa-wallet text-xl"></i>
+                    </div>
+                    <span class="text-[10px] font-black uppercase text-emerald-500 bg-emerald-50 px-2 py-1 rounded-lg">Total Earned</span>
+                </div>
+                <p class="text-xs font-bold text-gray-400 uppercase tracking-widest">Released to Account</p>
+                <p class="text-3xl font-black text-gray-900 mt-1">₹{{ total_earned|default:"0.00" }}</p>
+            </div>
+
+            <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 relative overflow-hidden group">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="bg-amber-50 text-amber-600 p-3 rounded-2xl">
+                        <i class="fas fa-lock text-xl"></i>
+                    </div>
+                    <span class="text-[10px] font-black uppercase text-amber-500 bg-amber-50 px-2 py-1 rounded-lg">Escrow Hold</span>
+                </div>
+                <p class="text-xs font-bold text-gray-400 uppercase tracking-widest">Awaiting Release</p>
+                <p class="text-3xl font-black text-gray-900 mt-1">₹{{ pending_escrow|default:"0.00" }}</p>
+            </div>
+
+            <div class="p-6 rounded-3xl shadow-xl flex flex-col justify-between 
+                {% if vendor.is_available %} bg-indigo-600 text-white {% else %} bg-slate-800 text-white {% endif %}">
+                <div class="flex justify-between items-start">
+                    <div class="bg-white/20 p-3 rounded-2xl">
+                        <i class="fas {% if vendor.is_available %}fa-eye{% else %}fa-eye-slash{% endif %} text-xl"></i>
+                    </div>
+                </div>
+                <div class="mt-6">
+                    <p class="text-xs font-bold uppercase tracking-widest opacity-60">Visibility Status</p>
+                    <p class="text-2xl font-black">
+                        {% if vendor.is_available %} Accepting Requests {% else %} Currently Offline {% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+            <div class="p-8 border-b border-gray-50 flex flex-col sm:flex-row justify-between items-center gap-4">
+                <h3 class="font-black text-gray-800 text-xl tracking-tight">Catering Orders & Financials</h3>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead class="bg-gray-50/50 text-gray-400 uppercase text-[10px] font-black tracking-widest">
+                        <tr>
+                            <th class="px-8 py-5">Customer</th>
+                            <th class="px-8 py-5">Service Details</th>
+                            <th class="px-8 py-5">Total Amount</th>
+                            <th class="px-8 py-5">Escrow Status</th>
+                            <th class="px-8 py-5 text-right">Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody class="divide-y divide-gray-50">
+                        {% for booking in bookings %}
+                        <tr class="group hover:bg-indigo-50/30 transition-all">
+                            <td class="px-8 py-6">
+                                <div class="font-black text-gray-800">{{ booking.customer.get_full_name|default:booking.customer.username }}</div>
+                                <div class="text-xs text-gray-400 font-medium">{{ booking.customer.email }}</div>
+                            </td>
+
+                            <td class="px-8 py-6">
+                                <div class="flex items-center text-sm font-bold text-gray-600">
+                                    <i class="far fa-calendar-check mr-2 text-indigo-500"></i>
+                                    {{ booking.event_datetime|date:"d M Y" }}
+                                </div>
+                                {% if booking.guest_count %}
+                                <div class="text-[10px] text-indigo-500 font-black uppercase mt-1">
+                                    {{ booking.guest_count }} Guests • {{ booking.food_type_selected|capfirst }}
+                                </div>
+                                {% endif %}
+                            </td>
+
+                            <td class="px-8 py-6">
+                                <div class="text-lg font-black text-gray-900">₹{{ booking.total_amount }}</div>
+                                {% if booking.vendor.price_per_plate %}
+                                <div class="text-[10px] text-gray-400 font-bold uppercase">₹{{ booking.vendor.price_per_plate }}/plate</div>
+                                {% endif %}
+                            </td>
+
+                            <td class="px-8 py-6">
+                                <div class="flex flex-col gap-1.5">
+                                    {% if booking.advance_paid %}
+                                        <span class="inline-flex items-center text-[9px] font-black uppercase {% if booking.advance_released %}text-gray-400 bg-gray-50{% else %}text-emerald-600 bg-emerald-50 border-emerald-200{% endif %} px-2 py-0.5 rounded border w-fit">
+                                            Advance {% if booking.advance_released %}(Paid Out){% else %}Secured{% endif %}
+                                        </span>
+                                    {% else %}
+                                        <span class="text-[9px] font-black uppercase text-red-400 bg-red-50 px-2 py-0.5 rounded w-fit">Awaiting Payment</span>
+                                    {% endif %}
+                                    
+                                    {% if booking.balance_paid %}
+                                        <span class="inline-flex items-center text-[9px] font-black uppercase {% if booking.balance_released %}text-gray-400 bg-gray-50{% else %}text-indigo-600 bg-indigo-50 border-indigo-200{% endif %} px-2 py-0.5 rounded border w-fit">
+                                            Balance {% if booking.balance_released %}(Paid Out){% else %}Secured{% endif %}
+                                        </span>
+                                    {% endif %}
+                                </div>
+                            </td>
+
+                            <td class="px-8 py-6 text-right">
+                                {% if booking.status == 'disputed' %}
+                                    <span class="text-red-500 text-[10px] font-black uppercase"><i class="fas fa-exclamation-circle mr-1"></i> Disputed</span>
+                                {% else %}
+                                    
+                                    {% if booking.advance_paid and not booking.advance_released %}
+                                        {% if booking.withdraw_requested %}
+                                            <span class="text-[10px] font-black text-amber-500 uppercase italic">Processing...</span>
+                                        {% else %}
+                                            <a href="{% url 'request_withdraw' booking.id %}" class="inline-block px-4 py-2 bg-indigo-600 text-white text-[10px] font-black rounded-lg hover:bg-indigo-700 uppercase tracking-widest transition shadow-sm shadow-indigo-100">
+                                                Withdraw Advance (₹{{ booking.advance_vendor_share|floatformat:0 }})
+                                            </a>
+                                        {% endif %}
+                                    
+                                    {% elif booking.balance_paid and not booking.balance_released %}
+                                         <a href="{% url 'request_withdraw' booking.id %}" class="inline-block px-4 py-2 bg-emerald-600 text-white text-[10px] font-black rounded-lg hover:bg-emerald-700 uppercase tracking-widest transition shadow-sm shadow-emerald-100">
+                                            Withdraw Balance (₹{{ booking.balance_vendor_share|floatformat:0 }})
+                                        </a>
+                                    
+                                    {% elif booking.advance_released and not booking.balance_paid %}
+                                        <span class="text-[10px] font-bold text-gray-400 uppercase italic">Event in Progress</span>
+                                    {% else %}
+                                        <div class="text-emerald-500 text-lg"><i class="fas fa-check-circle"></i></div>
+                                    {% endif %}
+
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="py-24 text-center">
+                                <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4 text-gray-300">
+                                    <i class="fas fa-calendar-xmark text-2xl"></i>
+                                </div>
+                                <h4 class="font-bold text-gray-800">No active bookings</h4>
+                                <p class="text-sm text-gray-400">New event requests will appear here once they book your service.</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</main>
+
+</body>
+</html>

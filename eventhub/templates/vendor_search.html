@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Search Vendors</title>
+
+```
+<style>
+    body{
+        font-family: Arial;
+        background:#f4f6fb;
+        margin:0;
+    }
+
+    .header{
+        background:#4a67ff;
+        color:white;
+        padding:15px;
+        text-align:center;
+    }
+
+    .container{
+        width:85%;
+        margin:30px auto;
+    }
+
+    .card{
+        background:white;
+        padding:18px;
+        margin-bottom:18px;
+        border-radius:10px;
+        box-shadow:0 4px 12px rgba(0,0,0,0.1);
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+    }
+
+    .card h3{
+        margin:0;
+        color:#333;
+    }
+
+    .card p{
+        margin:5px 0;
+        color:#666;
+    }
+
+    .btn{
+        background:#4a67ff;
+        color:white;
+        padding:8px 16px;
+        border-radius:6px;
+        text-decoration:none;
+    }
+
+    .btn:hover{
+        background:#2e49d1;
+    }
+
+    .empty{
+        text-align:center;
+        margin-top:80px;
+        font-size:20px;
+        color:#888;
+    }
+</style>
+```
+
+</head>
+
+<body>
+
+<div class="header">
+    <h2>Vendor Search Results</h2>
+</div>
+
+<div class="container">
+
+```
+{% if vendors %}
+    {% for vendor in vendors %}
+    <div class="card">
+        <div>
+            <h3>{{ vendor.business_name }}</h3>
+            <p><b>Category:</b> {{ vendor.category.name }}</p>
+            <p><b>Location:</b> {{ vendor.location }}</p>
+            <p><b>Starting Price:</b> ₹{{ vendor.base_price }}</p>
+        </div>
+
+        <a class="btn" href="/vendor/{{ vendor.id }}/">View</a>
+    </div>
+    {% endfor %}
+{% else %}
+    <div class="empty">
+        No vendors found 😔
+    </div>
+{% endif %}
+```
+
+</div>
+
+</body>
+</html>

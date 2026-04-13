@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Results | EventHub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body class="bg-gray-50">
+
+<!-- NAVBAR -->
+<nav class="bg-white shadow-sm p-4 sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto flex justify-between items-center">
+        <a href="{% url 'home' %}" class="text-2xl font-bold text-indigo-600">EventHub</a>
+
+        <div class="flex items-center space-x-4">
+            {% if user.is_authenticated %}
+                <a href="{% url 'customer_dashboard' %}" class="text-gray-700 hover:text-indigo-600 font-medium">
+                    My Bookings
+                </a>
+            {% else %}
+                <a href="{% url 'login' %}" class="text-gray-600 hover:text-indigo-600">Login</a>
+                <a href="{% url 'customer_register' %}" 
+                   class="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-bold">
+                    Sign Up
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</nav>
+
+<div class="max-w-7xl mx-auto px-4 py-8">
+<div class="flex flex-col md:flex-row gap-8">
+
+<!-- FILTER SIDEBAR -->
+<div class="w-full md:w-1/4">
+<div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 sticky top-24">
+<h3 class="font-bold text-lg mb-4 text-gray-800 border-b pb-2">
+    Filter Results
+</h3>
+
+<form action="{% url 'vendor_search' %}" method="GET" class="space-y-6">
+
+<!-- CATEGORY -->
+<div>
+    <label class="block text-sm font-semibold text-gray-600 mb-2 uppercase tracking-wider">
+        Service Type
+    </label>
+    <select name="category"
+            class="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 py-2 px-3 border bg-gray-50">
+        <option value="">All Services</option>
+        {% for cat in categories %}
+            <option value="{{ cat.id }}"
+                {% if request.GET.category == cat.id|stringformat:"i" %}selected{% endif %}>
+                {{ cat.name }}
+            </option>
+        {% endfor %}
+    </select>
+</div>
+
+<!-- PRICE RANGE -->
+<div>
+    <label class="block text-sm font-semibold text-gray-600 mb-2 uppercase tracking-wider">
+        Price Range
+    </label>
+    <div class="flex gap-2">
+        <input type="number" name="min_price" placeholder="Min"
+               value="{{ request.GET.min_price }}"
+               class="w-1/2 border rounded-md p-2 bg-gray-50">
+        <input type="number" name="max_price" placeholder="Max"
+               value="{{ request.GET.max_price }}"
+               class="w-1/2 border rounded-md p-2 bg-gray-50">
+    </div>
+</div>
+
+<!-- SORT -->
+<div>
+    <label class="block text-sm font-semibold text-gray-600 mb-2 uppercase tracking-wider">
+        Sort By
+    </label>
+    <select name="sort" class="w-full border rounded-md p-2 bg-gray-50">
+        <option value="">Default</option>
+        <option value="low" {% if request.GET.sort == "low" %}selected{% endif %}>
+            Price: Low to High
+        </option>
+        <option value="high" {% if request.GET.sort == "high" %}selected{% endif %}>
+            Price: High to Low
+        </option>
+    </select>
+</div>
+
+<!-- LOCATION -->
+<div>
+    <label class="block text-sm font-semibold text-gray-600 mb-2 uppercase tracking-wider">
+        Location
+    </label>
+    <div class="relative">
+        <i class="fas fa-map-marker-alt absolute left-3 top-3 text-gray-400"></i>
+        <input type="text" name="location"
+               value="{{ request.GET.location }}"
+               placeholder="e.g. Mumbai"
+               class="w-full border-gray-300 rounded-md shadow-sm py-2 pl-10 pr-3 border focus:ring-indigo-500">
+    </div>
+</div>
+
+<button type="submit"
+        class="w-full bg-indigo-600 text-white font-bold py-3 rounded-lg hover:bg-indigo-700 transition shadow-md">
+    Apply Filters
+</button>
+
+<a href="{% url 'vendor_search' %}"
+   class="block text-center text-sm text-gray-500 hover:text-indigo-600 mt-2">
+    Clear All Filters
+</a>
+
+</form>
+</div>
+</div>
+
+<!-- RESULTS SECTION -->
+<div class="w-full md:w-3/4">
+
+<div class="mb-6">
+<p class="text-indigo-600 font-bold text-sm uppercase">Marketplace</p>
+<h2 class="text-3xl font-bold text-gray-800">
+    Found {{ vendors.paginator.count }} Professionals
+    {% if request.GET.location %}in {{ request.GET.location }}{% endif %}
+</h2>
+</div>
+
+{% if vendors %}
+
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
+
+{% for vendor in vendors %}
+<div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-2xl transition-all duration-300 flex flex-col group">
+
+<div class="relative h-56 overflow-hidden">
+
+{% if vendor.service_image %}
+<img src="{{ vendor.service_image.url }}"
+     class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+{% else %}
+<img src="/static/default_service.jpg"
+     class="w-full h-full object-cover">
+{% endif %}
+
+{% if vendor.is_verified %}
+<div class="absolute top-3 left-3">
+<span class="bg-white/90 backdrop-blur text-green-600 text-xs font-bold px-2 py-1 rounded-md shadow-sm">
+<i class="fas fa-check-circle"></i> Verified
+</span>
+</div>
+{% endif %}
+
+<div class="absolute bottom-0 left-0 w-full p-4 bg-gradient-to-t from-black/60 to-transparent">
+<div class="flex items-center space-x-3">
+
+{% if vendor.profile_pic %}
+<img src="{{ vendor.profile_pic.url }}"
+     class="w-10 h-10 rounded-full border-2 border-white object-cover">
+{% else %}
+<img src="/static/default_user.png"
+     class="w-10 h-10 rounded-full border-2 border-white object-cover">
+{% endif %}
+
+<span class="text-white font-bold">
+    {{ vendor.business_name }}
+</span>
+</div>
+</div>
+</div>
+
+<div class="p-6 flex-1 flex flex-col">
+
+<div class="flex justify-between items-start mb-4">
+<div>
+<span class="bg-indigo-50 text-indigo-700 text-xs uppercase font-bold px-2 py-1 rounded">
+    {{ vendor.category.name }}
+</span>
+
+<div class="flex items-center mt-2 text-yellow-500 text-sm">
+<i class="fas fa-star"></i>
+<i class="fas fa-star"></i>
+<i class="fas fa-star"></i>
+<i class="fas fa-star"></i>
+<i class="fas fa-star-half-alt"></i>
+<span class="text-gray-400 ml-2">(4.8)</span>
+</div>
+</div>
+
+<div class="text-right">
+<p class="text-2xl font-black text-gray-900">
+₹{{ vendor.base_price }}
+</p>
+<p class="text-xs text-gray-400 uppercase font-bold">
+Starting Price
+</p>
+</div>
+</div>
+
+<p class="text-gray-500 text-sm mb-4">
+<i class="fas fa-map-marker-alt text-indigo-500 mr-1"></i>
+{{ vendor.location }}
+</p>
+
+
+<div class="mt-auto pt-4 border-t border-gray-50">
+<a href="{% url 'vendor_detail' vendor.id %}"
+   class="block text-center bg-indigo-600 text-white py-3 rounded-xl font-bold hover:bg-indigo-700 transition shadow-lg shadow-indigo-100">
+Check Availability
+</a>
+</div>
+
+</div>
+</div>
+{% endfor %}
+</div>
+
+<!-- PAGINATION -->
+<div class="mt-10 flex justify-center">
+<div class="flex gap-2">
+
+{% if vendors.has_previous %}
+<a href="?page={{ vendors.previous_page_number }}&category={{ request.GET.category }}&location={{ request.GET.location }}&min_price={{ request.GET.min_price }}&max_price={{ request.GET.max_price }}&sort={{ request.GET.sort }}"
+   class="px-4 py-2 bg-gray-200 rounded-lg">
+Previous
+</a>
+{% endif %}
+
+<span class="px-4 py-2 bg-indigo-600 text-white rounded-lg">
+{{ vendors.number }}
+</span>
+
+{% if vendors.has_next %}
+<a href="?page={{ vendors.next_page_number }}&category={{ request.GET.category }}&location={{ request.GET.location }}&min_price={{ request.GET.min_price }}&max_price={{ request.GET.max_price }}&sort={{ request.GET.sort }}"
+   class="px-4 py-2 bg-gray-200 rounded-lg">
+Next
+</a>
+{% endif %}
+
+</div>
+</div>
+
+{% else %}
+
+<div class="bg-white p-16 rounded-3xl text-center border-2 border-dashed border-gray-200">
+<h3 class="text-2xl font-bold text-gray-800">
+No vendors match your search
+</h3>
+<p class="text-gray-500 mt-2">
+Try changing filters to find more results.
+</p>
+</div>
+
+{% endif %}
+</div>
+</div>
+</div>
+
+</body>
+</html>

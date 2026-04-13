@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Registration - EventHub</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(120deg, #4facfe, #00f2fe);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .box {
+            background: white;
+            padding: 40px;
+            width: 90%;
+            max-width: 400px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            text-align: center;
+        }
+
+        h2 {
+            margin-bottom: 25px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .messages {
+            margin-bottom: 15px;
+            list-style: none;
+            padding: 0;
+            font-size: 14px;
+        }
+
+        /* Improved message styling to handle different Django tags */
+        .message-item {
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 5px;
+        }
+
+        .error {
+            color: #721c24;
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+        }
+
+        .success {
+            color: #155724;
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            outline: none;
+            font-size: 14px;
+            box-sizing: border-box;
+            transition: border 0.3s;
+        }
+
+        input:focus {
+            border-color: #4facfe;
+            box-shadow: 0 0 5px rgba(79,172,254,0.4);
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #4facfe;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 15px;
+        }
+
+        button:hover {
+            background: #2f8ff7;
+            transform: translateY(-1px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .login-link {
+            margin-top: 20px;
+            display: block;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .login-link a {
+            text-decoration: none;
+            color: #2f8ff7;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="box">
+    <h2>Join EventHub</h2>
+
+    {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                <div class="message-item {{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <form method="POST">
+        {% csrf_token %}
+        
+        <input type="text" name="username" placeholder="Username" required autocomplete="username">
+        
+        <input type="email" name="email" placeholder="Email Address" required autocomplete="email">
+        
+        <input type="tel" name="phone" placeholder="Phone Number" required autocomplete="tel">
+        
+        <input type="password" name="password" placeholder="Password" required autocomplete="new-password">
+        
+        <input type="password" name="confirm_password" placeholder="Confirm Password" required autocomplete="new-password">
+        
+        <button type="submit">Create Account</button>
+    </form>
+
+    <div class="login-link">
+        Already have an account? <a href="{% url 'login' %}">Login</a>
+    </div>
+</div>
+
+</body>
+</html>

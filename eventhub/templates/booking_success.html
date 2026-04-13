@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Confirmed! | EventHub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+</head>
+<body class="bg-slate-50 flex items-center justify-center min-h-screen p-4">
+
+    <div class="max-w-md w-full bg-white p-8 md:p-12 rounded-[2.5rem] shadow-2xl text-center relative overflow-hidden border border-gray-100">
+        
+        <div class="w-24 h-24 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm">
+            <i class="fas fa-check text-4xl animate-bounce"></i>
+        </div>
+
+        <h1 class="text-3xl font-black text-gray-900 mb-2 tracking-tight">Payment Received!</h1>
+        <p class="text-gray-500 mb-8 font-medium leading-relaxed">
+            Your booking for <span class="text-indigo-600 font-bold">{{ booking.vendor.business_name }}</span> is now confirmed.
+        </p>
+
+        <div class="bg-gray-50 rounded-3xl p-6 mb-8 text-left border border-gray-100">
+            <div class="flex justify-between mb-2 text-sm">
+                <span class="text-gray-400">Booking ID</span>
+                <span class="font-bold text-gray-700">#{{ booking.id }}</span>
+            </div>
+            <div class="flex justify-between mb-2 text-sm">
+                <span class="text-gray-400">Event Date</span>
+                <span class="font-bold text-gray-700">{{ booking.event_datetime|date:"d M, Y" }}</span>
+            </div>
+            <div class="flex justify-between text-sm">
+                <span class="text-gray-400">Amount Paid</span>
+                <span class="font-bold text-green-600">₹{{ display_amount|floatformat:2 }}</span>
+            </div>
+        </div>
+        
+        <div class="space-y-3">
+            <a href="{% url 'customer_dashboard' %}" class="block w-full bg-indigo-600 text-white py-4 rounded-2xl font-bold hover:bg-indigo-700 transition shadow-lg shadow-indigo-100 transform hover:-translate-y-1">
+                View My Bookings
+            </a>
+            
+            <a href="{% url 'home' %}" class="block w-full text-gray-400 font-semibold py-2 hover:text-gray-600 transition text-sm">
+                Back to Home
+            </a>
+        </div>
+
+        <p class="mt-8 text-[10px] text-gray-300 uppercase tracking-widest font-bold">
+            A confirmation email has been sent to {{ request.user.email }}
+        </p>
+    </div>
+
+    <script>
+        // Trigger Confetti on Load
+        window.onload = function() {
+            var duration = 3 * 1000;
+            var end = Date.now() + duration;
+
+            (function frame() {
+              confetti({
+                particleCount: 3,
+                angle: 60,
+                spread: 55,
+                origin: { x: 0 },
+                colors: ['#4F46E5', '#10B981']
+              });
+              confetti({
+                particleCount: 3,
+                angle: 120,
+                spread: 55,
+                origin: { x: 1 },
+                colors: ['#4F46E5', '#10B981']
+              });
+
+              if (Date.now() < end) {
+                requestAnimationFrame(frame);
+              }
+            }());
+        };
+    </script>
+</body>
+</html>
