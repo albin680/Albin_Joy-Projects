@@ -1,0 +1,62 @@
+1)Create Root Node 
+2)Insert Node
+3)Search
+4)preorederTraversal 
+5)Delete
+6)Quit
+Choose an option: 1
+
+Enter a number: 2
+
+1)Create Root Node 
+2)Insert Node
+3)Search
+4)preorederTraversal 
+5)Delete
+6)Quit
+Choose an option: 2
+
+Enter a number: 1
+
+1)Create Root Node 
+2)Insert Node
+3)Search
+4)preorederTraversal 
+5)Delete
+6)Quit
+Choose an option: 3
+
+Enter a number: 5
+
+Not FOUND!
+
+1)Create Root Node 
+2)Insert Node
+3)Search
+4)preorederTraversal 
+5)Delete
+6)Quit
+Choose an option: 4
+
+........................
+2->1->
+........................
+
+1)Create Root Node 
+2)Insert Node
+3)Search
+4)preorederTraversal 
+5)Delete
+6)Quit
+Choose an option: 5
+
+Enter a number to be deleted:4
+
+1)Create Root Node 
+2)Insert Node
+3)Search
+4)preorederTraversal 
+5)Delete
+6)Quit
+Choose an option: 
+

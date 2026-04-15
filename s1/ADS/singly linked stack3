@@ -1,0 +1,49 @@
+1.Push
+2.Pop
+3.Linear Search
+4.Display
+5.Exit
+
+Enter your choice:1
+
+Enter the value:7
+
+
+1.Push
+2.Pop
+3.Linear Search
+4.Display
+5.Exit
+
+Enter your choice:2
+Element popped - 7
+
+1.Push
+2.Pop
+3.Linear Search
+4.Display
+5.Exit
+
+Enter your choice:3
+
+Stack is empty
+
+1.Push
+2.Pop
+3.Linear Search
+4.Display
+5.Exit
+
+Enter your choice:4
+
+List is empty
+
+
+1.Push
+2.Pop
+3.Linear Search
+4.Display
+5.Exit
+
+Enter your choice:
+

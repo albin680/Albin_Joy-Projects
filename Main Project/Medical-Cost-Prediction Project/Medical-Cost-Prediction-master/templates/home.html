@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0"/>
+  <title>Medical Cost Prediction</title>
+
+  <!-- CSS  -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="../static/css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+</head>
+
+<body>
+  
+
+  <div class="section no-pad-bot" id="index-banner">
+    <div class="container">
+      <h1 class="header center red-text">Medical Insurance Cost Prediction</h1>
+      <h5 class="header col s12 light black-text center">Predict the cost for your Medical Insurance!</h5>
+
+      <div class="row">
+        <form action='/predict' method="post" class="col s12">
+          <div class="row">
+            <div class="input-field col s6">
+              <label for="age" class="active"><b>Age</b></label>
+              <input placeholder="Enter Age" name="age" id="age" type="text" class="validate">
+            </div>
+            
+            <div class="input-field col s6">
+              <label class="active"><b>Gender</b></label>
+              <select name="Gender" class="browser-default">
+                <option value="0">Male</option>
+                <option value="1">Female</option>
+              </select>
+            </div>
+            
+            <div class="input-field col s6">
+              <label for="bmi" class="active"><b>BMI</b></label>
+              <input id="bmi" name="bmi" placeholder="Enter BMI" type="text" class="validate">
+            </div>
+            
+            <div class="input-field col s6">
+              <label for="children" class="active"><b>Children</b></label>
+              <input id="children" name="children" placeholder="Number of children" type="text" class="validate">
+            </div>
+            
+            <div class="input-field col s6">
+              <label class="active"><b>Do you Smoke?</b></label>
+              <select name="smoker" class="browser-default">
+                <option value="1">Yes</option>
+                <option value="0">No</option>
+              </select>
+            </div>
+            
+            <div class="input-field col s6">
+              <label class="active"><b>Which Region?</b></label>
+              <select name="region" class="browser-default">
+                <option value="0">Northwest</option>
+                <option value="1">Northeast</option>
+                <option value="2">Southeast</option>
+                <option value="3">Southwest</option>
+              </select>
+            </div>
+          </div>
+          
+          <div class="row center">
+            <button type="submit" class="btn-large waves-effect waves-light amber lighten-1">Predict Probability</button>
+          </div>
+        </form>
+      </div>
+      <div class="dark-text">
+        <h4>{{pred}}</h4>
+      </div>
+    </div>
+  </div>
+  
+  
+  
+  <!--  Scripts-->
+  <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <script src="../static/js/materialize.js"></script>
+  <script src="js/init.js"></script>
+</body>
+</html>

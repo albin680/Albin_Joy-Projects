@@ -1,0 +1,55 @@
+Enter the limit: 5
+
+1:Push
+2:Pop
+3:Display
+4:Exit
+1
+Enter the Element
+23
+
+1:Push
+2:Pop
+3:Display
+4:Exit
+1
+Enter the Element
+45
+
+1:Push
+2:Pop
+3:Display
+4:Exit
+1
+Enter the Element
+63
+
+1:Push
+2:Pop
+3:Display
+4:Exit
+3
+63
+45
+23
+
+1:Push
+2:Pop
+3:Display
+4:Exit
+2
+
+1:Push
+2:Pop
+3:Display
+4:Exit
+3
+45
+23
+
+1:Push
+2:Pop
+3:Display
+4:Exit
+
+

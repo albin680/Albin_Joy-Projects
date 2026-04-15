@@ -1,0 +1,42 @@
+<!Doctype html>
+<html lang="en">
+<head>
+	meta charset="UTF-8">
+	<meta name=""viewport" content="width=device=width, initial-scale=1.0">
+<style>
+	table{
+		width: 80%;
+		border-collapse: collapse;
+		margin: 0 auto;
+	}
+	th, td {
+		border: 1px solid black;
+		padding: 15px;
+		text-align: center;
+		font-size: 16px;
+	}
+	th{
+		background-color: #f2f2f2;
+	}
+</style>
+</head>
+<body>
+	<h2>Enter year to Generate calendar:</h2.
+	<input type="number" id="yearInput">
+	<button onclick="generatecalendar()">Generate calendar</button>
+	<h2 id="calendaryear">calendar for <span id"displayYear"></span></h2>
+	<div id="calendar"></div>
+	<script>
+		function generatecalendar(){
+			var year = document.getElementById("year Input").value;
+			var calendarYearHeading =document.getElementById("calendarYear");
+			calendarYearHeading.textContent = "Calendar for " + year;
+var calendar = "<table>";
+
+for (var month = 0; month < 12; month++) {
+		calendar += "<tr><th colspan='7'>" +;&gt;&quot; + getMonthName(month) +
+&quot;&lt;/th&gt;&lt;/tr&gt;&quot;;
+calendar +=
+&quot;&lt;tr&gt;&lt;th&gt;Sun&lt;/th&gt;&lt;th&gt;Mon&lt;/th&gt;&lt;th&gt;Tue&lt;/th&gt;&lt;th&gt;Wed&lt;/th&gt;&lt;th&gt;Thu&lt;/th&gt;&lt;th&gt;Fri&lt;/t
+h&gt;&lt;th&gt;Sat&lt;/th&gt;&lt;/tr&gt;&lt;tr&gt;&quot;;
+			

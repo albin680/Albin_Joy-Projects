@@ -1,0 +1,161 @@
+
+1 To see list
+	2 For insertion at starting
+	3 For insertion at end
+	4 For insertion at any position
+	5 For deletion of first element
+	6 For deletion of last element
+	7 For deletion of element at any position
+	8 Search an element in linked list
+	9 To exit
+
+Enter Choice :
+1
+List is empty
+
+	1 To see list
+	2 For insertion at starting
+	3 For insertion at end
+	4 For insertion at any position
+	5 For deletion of first element
+	6 For deletion of last element
+	7 For deletion of element at any position
+	8 Search an element in linked list
+	9 To exit
+
+Enter Choice :
+2
+Enter number to be inserted : 5
+1 To see list
+	2 For insertion at starting
+	3 For insertion at end
+	4 For insertion at any position
+	5 For deletion of first element
+	6 For deletion of last element
+	7 For deletion of element at any position
+	8 Search an element in linked list
+	9 To exit
+
+Enter Choice :
+3
+Enter number to be inserted : 6
+1 To see list
+	2 For insertion at starting
+	3 For insertion at end
+	4 For insertion at any position
+	5 For deletion of first element
+	6 For deletion of last element
+	7 For deletion of element at any position
+	8 Search an element in linked list
+	9 To exit
+
+Enter Choice :
+4
+Enter position and data :1
+8
+1 To see list
+	2 For insertion at starting
+	3 For insertion at end
+	4 For insertion at any position
+	5 For deletion of first element
+	6 For deletion of last element
+	7 For deletion of element at any position
+	8 Search an element in linked list
+	9 To exit
+
+Enter Choice :
+5
+1 To see list
+	2 For insertion at starting
+	3 For insertion at end
+	4 For insertion at any position
+	5 For deletion of first element
+	6 For deletion of last element
+	7 For deletion of element at any position
+	8 Search an element in linked list
+	9 To exit
+
+Enter Choice :
+1
+the list is
+ 8 --> 6 -->
+	1 To see list
+	2 For insertion at starting
+	3 For insertion at end
+	4 For insertion at any position
+	5 For deletion of first element
+	6 For deletion of last element
+	7 For deletion of element at any position
+	8 Search an element in linked list
+	9 To exit
+
+Enter Choice :
+6
+1 To see list
+	2 For insertion at starting
+	3 For insertion at end
+	4 For insertion at any position
+	5 For deletion of first element
+	6 For deletion of last element
+	7 For deletion of element at any position
+	8 Search an element in linked list
+	9 To exit
+
+Enter Choice :
+1
+the list is8 -->
+	1 To see list
+	2 For insertion at starting
+	3 For insertion at end
+	4 For insertion at any position
+	5 For deletion of first element
+	6 For deletion of last element
+	7 For deletion of element at any position
+	8 Search an element in linked list
+	9 To exit
+
+Enter Choice :
+8
+Enter the element you want to search: 8
+Yes, 8 is present in the linked list.
+
+	1 To see list
+	2 For insertion at starting
+	3 For insertion at end
+	4 For insertion at any position
+	5 For deletion of first element
+	6 For deletion of last element
+	7 For deletion of element at any position
+	8 Search an element in linked list
+	9 To exit
+
+Enter Choice : 
+7
+Enter position : 1
+
+	1 To see list
+	2 For insertion at starting
+	3 For insertion at end
+	4 For insertion at any position
+	5 For deletion of first element
+	6 For deletion of last element
+	7 For deletion of element at any position
+	8 Search an element in linked list
+	9 To exit
+
+
+Enter Choice :
+1
+the list is
+ 5 --> 6 -->
+
+	1 To see list
+	2 For insertion at starting
+	3 For insertion at end
+	4 For insertion at any position
+	5 For deletion of first element
+	6 For deletion of last element
+	7 For deletion of element at any position
+	8 Search an element in linked list
+	9 To exit
+

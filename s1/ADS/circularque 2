@@ -1,0 +1,59 @@
+Enter the size of the queue:1
+
+
+1.Insertion
+2.Deletion
+3.Display
+4.Search
+5.Exit
+
+Enter Your Choice:
+1      
+Enter the element to insert:2
+
+
+1.Insertion
+2.Deletion
+3.Display
+4.Search
+5.Exit
+
+Enter Your Choice:
+3
+Front=0
+Rear=0
+Queue is:
+2	
+
+1.Insertion
+2.Deletion
+3.Display
+4.Search
+5.Exit
+
+Enter Your Choice:
+4
+Enter the element to search:
+3
+Element not found
+
+
+1.Insertion
+2.Deletion
+3.Display
+4.Search
+5.Exit
+
+Enter Your Choice:
+2
+Deleted element is 2
+
+1.Insertion
+2.Deletion
+3.Display
+4.Search
+5.Exit
+
+Enter Your Choice:
+
+

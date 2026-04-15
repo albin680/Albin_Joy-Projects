@@ -1,0 +1,277 @@
+1)
+
+mysql> CREATE TABLE employeeS ( employee_id INT PRIMARY KEY, first_name VARCHAR (50), last_name VARCHAR (50), salary DECIMAL (10, 2) );//
+Query OK, 0 rows affected (0.75 sec)
+
+mysql> CREATE TABLE audit_log (
+    -> log_id INT PRIMARY KEY AUTO_INCREMENT,
+    -> action VARCHAR (255),
+    -> timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    -> );
+    -> //
+Query OK, 0 rows affected (0.39 sec)
+
+
+
+mysql> INSERT INTO employeeS(employee_id,first_name,last_name,salary)
+    -> VALUES
+    -> (1,'John','Doe',50000.00),
+    -> (2,'jane','Smith',60000.00),
+    -> (3,'Michael','Johnson',55000.00);
+    -> //
+Query OK, 3 rows affected (0.23 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+
+mysql> INSERT INTO audit_log (action, timestamp)
+    -> VALUES
+    -> ('New Employees added',CURRENT_TIMESTAMP);
+    -> //
+Query OK, 1 row affected (0.08 sec)
+
+mysql> select * from employeeS;
+    -> //
++-------------+------------+-----------+----------+
+| employee_id | first_name | last_name | salary   |
++-------------+------------+-----------+----------+
+|           1 | John       | Doe       | 50000.00 |
+|           2 | jane       | Smith     | 60000.00 |
+|           3 | Michael    | Johnson   | 55000.00 |
++-------------+------------+-----------+----------+
+3 rows in set (0.02 sec)
+
+
+mysql> select * from audit_log;
+    -> //
++--------+---------------------+---------------------+
+| log_id | action              | timestamp           |
++--------+---------------------+---------------------+
+|      1 | New Employees added | 2024-03-26 16:02:21 |
++--------+---------------------+---------------------+
+1 row in set (0.00 sec)
+
+
+
+mysql> DELIMITER //
+mysql> CREATE TRIGGER after_employee_insert
+    -> AFTER INSERT ON employeeS
+    -> FOR EACH ROW
+    -> BEGIN
+    -> INSERT INTO audit_log (action,timestamp)
+    -> VALUES ('New employee inserted',NOW());
+    -> END //
+Query OK, 0 rows affected (0.18 sec)
+
+mysql> delimiter ;
+mysql> INSERT INTO employeeS (employee_id, first_name, last_name, salary)
+    -> values(4,'Minnu','joseph',65000.00);
+Query OK, 1 row affected (0.08 sec)
+
+mysql> select * from employeeS;
++-------------+------------+-----------+----------+
+| employee_id | first_name | last_name | salary   |
++-------------+------------+-----------+----------+
+|           1 | john       | Doe       | 50000.00 |
+|           2 | jane       | smith     | 60000.00 |
+|           3 | Michael    | Johnson   | 55000.00 |
+|           4 | Minnu      | joseph    | 65000.00 |
++-------------+------------+-----------+----------+
+4 rows in set (0.00 sec)
+
+mysql> select * from audit_log;
++--------+-----------------------+---------------------+
+| log_id | action                | timestamp           |
++--------+-----------------------+---------------------+
+|      1 | New employees added   | 2024-03-26 16:09:18 |
+|      2 | new employee inserted | 2024-04-05 11:25:54 |
++--------+-----------------------+---------------------+
+2 rows in set (0.00 sec)
+
+
+2)
+
+mysql> create table std1(
+    -> studentID int primary key,
+    -> Name varchar(20),
+    -> sub1 INT,
+    -> sub2 int,
+    -> sub3 int,
+    -> sub4 int,
+    -> sub5 int,
+    -> total int,
+    -> per_marks int,
+    -> grade varchar(20));
+Query OK, 0 rows affected (1.45 sec)
+
+mysql> insert into std1(studentID,Name,sub1,sub2,sub3,sub4,sub5) values  (1,'alan biju',0,0,0,0,0), (2,'Alby sholly',0,0,0,0,0);
+Query OK, 2 rows affected (0.05 sec)
+Records: 2  Duplicates: 0  Warnings: 0
+
+mysql> select *from std1;
++-----------+-------------+------+------+------+------+------+-------+-----------+-------+
+| studentID | Name        | sub1 | sub2 | sub3 | sub4 | sub5 | total | per_marks | grade |
++-----------+-------------+------+------+------+------+------+-------+-----------+-------+
+|         1 | alan biju   |    0 |    0 |    0 |    0 |    0 |  NULL |      NULL | NULL  |
+|         2 | Alby sholly |    0 |    0 |    0 |    0 |    0 |  NULL |      NULL | NULL  |
++-----------+-------------+------+------+------+------+------+-------+-----------+-------+
+2 rows in set (0.00 sec)
+
+mysql> create trigger std_before_update before update on std1 for each row begin declare total_marks int; declare per_marks int; DECLARE grade VARCHAR(20); SET total_marks = NEW.sub1 + NEW.sub2 + NEW.sub3 + NEW.sub4 + NEW.sub5; SET per_marks = total_marks / 5; IF per_marks >= 90 THEN SET grade = 'EXCELLENT';
+    -> ELSEIF per_marks >= 75 AND per_marks < 90 THEN
+    -> set grade = 'very good';
+    -> elseif per_marks >= 60 and per_marks < 75 then
+    -> set grade = 'GOOD';
+    -> elseif per_marks >= 40 and per_marks < 60 then
+    -> set grade = 'AVERAGE';
+    -> else
+    -> set grade = 'NOT PROMOTED';
+    -> end if;
+    -> set new.total = total_marks;
+    -> set new.per_marks = per_marks;
+    -> set new.grade = grade;
+    -> end;
+    -> //
+Query OK, 0 rows affected (0.08 sec)
+
+ysql> UPDATE std1 SET sub1 = 90, sub2 = 75, sub3 = 90, sub4 = 95, sub5 = 85 WHERE studentID = 1;
+Query OK, 1 row affected (0.07 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> select * from std1;
++-----------+-------------+------+------+------+------+------+-------+-----------+-----------+
+| studentID | Name        | sub1 | sub2 | sub3 | sub4 | sub5 | total | per_marks | grade     |
++-----------+-------------+------+------+------+------+------+-------+-----------+-----------+
+|         1 | alan biju   |   90 |   75 |   90 |   95 |   85 |   435 |        87 | very good |
+|         2 | Alby sholly |    0 |    0 |    0 |    0 |    0 |  NULL |      NULL | NULL      |
++-----------+-------------+------+------+------+------+------+-------+-----------+-----------+
+2 rows in set (0.00 sec)
+
+
+3)
+
+
+mysql> create table sudentS(
+    -> id int NOT NULL AUTO_INCREMENT,
+    -> name varchar(45) NOT NULL,
+    -> class int NOT NULL,
+    -> email_id varchar(65) NOT NULL,
+    -> PRIMARY KEY(id));
+Query OK, 0 rows affected (0.29 sec)
+
+mysql> INSERT INTO sudentS(name, class, email_id) VALUES ('Stephen', 6,'stephen@gmail.com'), ('Bob',7,'bob@gmail.com'), ('Steven',8,'steven@gmail.com'), ('Alexandar',7,'alexandar@gmail.com');
+Query OK, 4 rows affected (0.03 sec)
+Records: 4  Duplicates: 0  Warnings: 0
+
+mysql> create table student_log(
+    -> user varchar(45) NOT NULL,
+    -> descriptions varchar(65) NOT NULL
+    -> );
+Query OK, 0 rows affected (0.35 sec)
+
+mysql> select * from sudentS;
++----+-----------+-------+---------------------+
+| id | name      | class | email_id            |
++----+-----------+-------+---------------------+
+|  1 | Stephen   |     6 | stephen@gmail.com   |
+|  2 | Bob       |     7 | bob@gmail.com       |
+|  3 | Steven    |     8 | steven@gmail.com    |
+|  4 | Alexandar |     7 | alexandar@gmail.com |
++----+-----------+-------+---------------------+
+4 rows in set (0.00 sec)
+
+mysql> delimiter //
+mysql> create trigger after_update_stdnts
+    -> after update
+    -> on sudentS
+    -> for each row
+    -> begin
+    -> INSERT INTO student_log VALUES (user(),
+    -> CONCAT('Update Student Record ', OLD.name,'Previous Class:',
+    -> OLD.class,'Present Class', NEW.class));
+    -> end //
+Query OK, 0 rows affected (0.16 sec)
+
+mysql> delimiter ;
+mysql> select * from student_log;
+Empty set (0.00 sec)
+
+mysql> update sudentS set class=class+1;
+Query OK, 4 rows affected (0.17 sec)
+Rows matched: 4  Changed: 4  Warnings: 0
+
+mysql> select * from student_log;
++----------------+---------------------------------------------------------------+
+| user           | descriptions                                                  |
++----------------+---------------------------------------------------------------+
+| root@localhost | Update Student Record StephenPrevious Class:6Present Class7   |
+| root@localhost | Update Student Record BobPrevious Class:7Present Class8       |
+| root@localhost | Update Student Record StevenPrevious Class:8Present Class9    |
+| root@localhost | Update Student Record AlexandarPrevious Class:7Present Class8 |
++----------------+---------------------------------------------------------------+
+4 rows in set (0.01 sec)
+
+mysql> select * from sudentS;
++----+-----------+-------+---------------------+
+| id | name      | class | email_id            |
++----+-----------+-------+---------------------+
+|  1 | Stephen   |     7 | stephen@gmail.com   |
+|  2 | Bob       |     8 | bob@gmail.com       |
+|  3 | Steven    |     9 | steven@gmail.com    |
+|  4 | Alexandar |     8 | alexandar@gmail.com |
++----+-----------+-------+---------------------+
+4 rows in set (0.00 sec)
+
+
+4)
+
+
+mysql> CREATE PROCEDURE calculate_av_salary() BEGIN DECLARE cur_salary INT; DECLARE total_salary INTEGER DEFAULT 0; DECLARE num_rows INTEGER DEFAULT 0; DECLARE avg_salary INTEGER DEFAULT 0; DECLARE done BOOLEAN DEFAULT FALSE; DECLARE salary_cursor CURSOR FOR SELECT salary FROM employeeS; DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE; OPEN salary_cursor; fetch_loop: LOOP FETCH salary_cursor INTO cur_salary; IF done THEN LEAVE fetch_loop; END IF; IF cur_salary IS NOT NULL THEN SET total_salary = total_salary + cur_salary; SET
+num_rows = num_rows + 1; END IF; END LOOP fetch_loop; CLOSE salary_cursor; IF num_rows > 0 THEN SET avg_salary = total_salary / num_rows; END IF; SELECT avg_salary; END//
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> select * from employeeS//
++-------------+------------+-----------+----------+
+| employee_id | first_name | last_name | salary   |
++-------------+------------+-----------+----------+
+|           1 | john       | Doe       | 50000.00 |
+|           2 | jane       | smith     | 60000.00 |
+|           3 | Michael    | Johnson   | 55000.00 |
+|           4 | Minnu      | joseph    | 65000.00 |
++-------------+------------+-----------+----------+
+4 rows in set (0.00 sec)
+
+mysql> call calculate_av_salary();
+    -> //
++------------+
+| avg_salary |
++------------+
+|      57500 |
++------------+
+1 row in set (0.01 sec)
+
+Query OK, 0 rows affected (0.01 sec)
+
+5)
+
+mysql> delimiter $$ create procedure list_names(inout name_list varchar(4000)) begin declare is_done integer default 0; declame varchar(100)default ""; declare stud_cursor cursor for select Name from student; declare continue handler for not found set is_done=1; open stud_cursor; get_list: LOOP fetch stud_cursor into s_name; if is_done = 1 then leave get_list; end if; set name_list= concat(s_name,";",name_list); end loop get_list; close stud_cursor; end $$ delimiter ;
+mysql> set @name_list="";
+    -> $$
+Query OK, 0 rows affected (0.04 sec)
+
+mysql> set @name_list="";
+    -> $$
+Query OK, 0 rows affected (0.04 sec)
+
+mysql> select @name_list;
+    -> $$
++------------+
+| @name_list |
++------------+
+|binil;ammu; |          |
++------------+
+1 row in set (0.00 sec)
+
+
+
+
+
