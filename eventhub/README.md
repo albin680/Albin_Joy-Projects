@@ -25,7 +25,9 @@ Role-Based Access Control (RBAC): Strict security protocols ensure that Users, V
 
 Dispute Resolution: Admin tools to oversee transactions and ensure the platform remains fair for all users.
 
-[[WEBSITE LINK: albinjoy.pythonanywhere.com]]
+
+[[  WEBSITE LINK: albinjoy.pythonanywhere.com  ]]
+
 
 🛠️ Technical Architecture & Stack
 Layer  Technology
